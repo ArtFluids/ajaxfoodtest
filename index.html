@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<title>Nutrition Facts</title>
+
+
+
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+
+
+<link rel= "stylesheet" type= "text/css" href = "nutrition.css">
+
+
+
+<script>
+
+$(document).ready(function() {
+
+
+
+	var item_number;
+
+
+
+	$("#subButton").click(function(e){
+
+	var foodname = $("#namefield").val();
+
+
+
+
+
+
+
+	var myurl1 = "http://api.nal.usda.gov/ndb/search/?format=json&q=";
+
+	 myurl1 += foodname;
+
+	 myurl1 += "&sort=n&max=25&offset=0&api_key=LF5xvPJq1kNpUdZQGdyIR0bEW1uJ9cB6pdhxByfo";
+
+	 console.log(myurl1);
+
+
+
+	$.ajax({
+
+		url: myurl1,
+
+		dataType: "json",
+
+		success : function(parsed_json) {
+
+
+
+			var output = "";
+
+			$.each(parsed_json.list.item, function(i,theItem)
+
+			{
+
+				var itemNum = theItem.ndbno;
+
+				output += '<input name="item" type="radio" value="' + itemNum + '">';
+
+				output += " " + theItem.name + "<br>";
+
+				//console.log(theItem.name);
+
+			})
+
+			$("#searchResults").html(output);
+
+		}
+
+	})
+
+	 e.preventDefault();
+
+
+
+});
+
+
+
+	$("#itemButton").click(function(e){
+
+		e.preventDefault();
+
+		item_number = $('input:radio[name=item]:checked').val();
+
+
+
+		var myurl2 = "http://api.nal.usda.gov/ndb/reports/?ndbno="
+
+			myurl2 += item_number;
+
+			myurl2 += "&type=b&format=json&api_key=LF5xvPJq1kNpUdZQGdyIR0bEW1uJ9cB6pdhxByfo";
+
+
+
+			console.log(myurl2);
+
+
+
+		$.ajax({
+
+			url: myurl2,
+
+			dataType: "json",
+
+			success : function(parsed_json) {
+
+				var output = "";
+
+
+
+				var name = parsed_json['report']['food']['name'];
+
+
+
+				var na = "N/A";
+
+
+
+				var serving_size = na;
+
+				var servings_per = na;
+
+
+
+
+
+				var calories = na;
+
+				var cal_from_fat = na;
+
+				var total_fat = na;
+
+				var saturated_fat = na;
+
+				var trans_fat = na;
+
+				var cholesterol = na;
+
+				var sodium = na;
+
+				var total_carb = na;
+
+				var fiber = na;
+
+				var sugar = na;
+
+				var protein = na;
+
+
+
+				var vitamin_a = na;
+
+				var vitamin_c = na;
+
+				var calcium = na;
+
+				var iron = na;
+
+
+
+				var total_fat_perc = na;
+
+				var saturated_fat_perc = na;
+
+				var cholesterol_perc = na;
+
+				var soduium_perc = na;
+
+				var total_carb_perc = na;
+
+				var fiber_perc = na;
+
+
+
+				console.log(name);
+
+
+
+				$.each(parsed_json.report.food.nutrients, function(i,theItem)
+
+				{
+
+					console.log(theItem.name + ": " + theItem.measures[0].value);
+
+
+
+					var type = theItem.nutrient_id;
+
+
+
+
+
+					if (type == "208") calories = theItem.measures[0].value;
+
+					if (type == "204") total_fat = theItem.measures[0].value;
+
+					if (type == "606") saturated_fat = theItem.measures[0].value;
+
+					if (type == "601") cholesterol = theItem.measures[0].value;
+
+					if (type == "307") sodium = theItem.measures[0].value;
+
+					if (type == "205") total_carb = theItem.measures[0].value;
+
+					if (type == "291") fiber = theItem.measures[0].value;
+
+					if (type == "269") sugar = theItem.measures[0].value;
+
+					if (type == "203") protein = theItem.measures[0].value;
+
+					if (type == "320") vitamin_a = theItem.measures[0].value;
+
+					if (type == "401") vitamin_c = theItem.measures[0].value;
+
+					if (type == "301") calcium = theItem.measures[0].value;
+
+					if (type == "303") iron = theItem.measures[0].value;
+
+				})
+
+
+
+				output += '<h1 id = "Header">Nutrition</h1> <p>Serving Size '
+
+
+
+				output += serving_size;
+
+
+
+				output += '</p> <p>Servings Per Container '
+
+
+
+				output += servings_per;
+
+
+
+				output += '</p><p id = "line">a</p><p id = "mini">Amount Per Serving</p><p id = "line1">a</p><p class = "nowrap" id = "subtitles">Calories ';
+
+
+
+				output += calories;
+
+
+
+				output += '<span id = "toright" style= "float:right;"> Calories from Fat ';
+
+
+
+				output += cal_from_fat;
+
+
+
+				output += '</span></p><p id = "line">a</p><p id = "right">%Daily Value</p><p id = "line1">a</p><p id = "subtitles">Total Fat ';
+
+
+
+				output += total_fat;
+
+
+
+				output += '<span id = "toright" style= "float:right;">'
+
+
+
+				output += total_fat_perc;
+
+
+
+				output += ' %</span></p><p id = "line1">s</p><p id = "subsec">  Saturated Fat ';
+
+
+
+				output += saturated_fat;
+
+
+
+				output += '<span id = "toright" style= "float:right;">'
+
+
+
+				output += saturated_fat_perc;
+
+
+
+				output += ' %</span></p><p id = "line1">a</p><p id = "subsec">  Trans Fat ';
+
+
+
+				output += trans_fat;
+
+
+
+				output += '</p><p id = "line1">a</p><p id = "subtitles">Cholesterol ';
+
+
+
+				output += cholesterol;
+
+
+
+				output += '<span id = "toright" style= "float:right;">';
+
+
+
+				output += cholesterol_perc;
+
+
+
+				output += ' %</span></p><p id = "line1">a</p><p id = "subtitles">Sodium ';
+
+
+
+				output += sodium;
+
+
+
+				output += '<span id = "toright" style= "float:right;">';
+
+
+
+				output += soduium_perc;
+
+
+
+				output += ' %</span></p><p id = "line1">a</p><p id = "subtitles">Total Carbohydrate '
+
+
+
+				output += total_carb;
+
+
+
+				output += '<span id = "toright" style= "float:right;">';
+
+
+
+				output += total_carb_perc;
+
+
+
+				output += ' %</span></p><p id = "line1">a</p><p id = "subsec">  Dietary Fiber ';
+
+
+
+				output += fiber;
+
+
+
+				output += '<span id = "toright" style= "float:right;">'
+
+
+
+				output += fiber_perc;
+
+
+
+				output += ' %</span></p><p id = "line1">a</p><p id = "subsec">  Sugars '
+
+
+
+				output += sugar;
+
+
+
+				output += '</p><p id = "line1">a</p><p id = "subtitles">Protein '
+
+
+
+				output += protein;
+
+
+
+				output += '</p><p id = "line">a</p><p>Vitamin A <span id = "toright" style= "float:right;">';
+
+
+
+				output += vitamin_a;
+
+
+
+				output += ' %</span></p><p id = "line1">a</p><p>Vitamin C <span id = "toright" style= "float:right;">'
+
+
+
+				output += vitamin_c;
+
+
+
+				output += ' %</span></p><p id = "line1">a</p><p>Calcium <span id = "toright" style= "float:right;">'
+
+
+
+				output += calcium;
+
+
+
+				output += ' %</span></p><p id = "line1">a</p><p>Iron <span id = "toright" style= "float:right;">'
+
+
+
+				output += iron;
+
+
+
+				output += ' %</span></p><p id = "line">a</p><p>Percent Daily Values are based on a 2,000 calorie diet. Your daily values may be higher or lower depending on your calorie needs.</p>'
+
+
+
+				$("#box").html(output);
+
+
+
+
+
+
+
+
+
+
+
+
+
+		}
+
+	})
+
+	
+
+
+
+	})
+
+
+
+});
+
+</script>
+
+
+
+</head>
+
+<body>
+
+
+
+<form>
+
+
+
+
+
+
+
+<p>
+
+<p>
+
+<div id = "box"></div>
+
+<div id = "searchbar">
+Search For A Food: </div><input type="text" id="namefield" value="">
+
+<input id="subButton" type="submit" value="Submit">
+
+
+
+
+
+
+
+<form>
+
+<div id="searchResults"></div>
+
+<input id="itemButton" type="button" value="Choose">
+
+</form>
+
+
+
+</form>
+
+
+
+</body>
+
+</html>
